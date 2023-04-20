@@ -30,6 +30,7 @@ base64 = "0.13.0"
 log = "0.4.14"
 env_logger = "0.9.1"
 aes-gcm = "0.9.2"
+tempdir = "0.3.7"
 
 [build-dependencies]
 tonic-build = "0.8.0"

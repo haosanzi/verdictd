@@ -24,3 +24,50 @@ pub fn set_key(kid: &String, key: &[u8]) -> std::io::Result<()> {
     fs::write(path, key).expect("Unable to write file");
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use std::io::ErrorKind;
+
+    fn cleanup_test_files() {
+        let _ = fs::remove_file(VERDICTD_KEY_PATH);
+    }
+
+    #[test]
+    fn test_get_key() {
+        let kid = String::from("test_key");
+        let key_content = b"test_key_content".to_vec();
+        cleanup_test_files();
+        fs::create_dir_all(&VERDICTD_KEY_PATH).expect("Unable to create directory");
+        let path = VERDICTD_KEY_PATH.to_string() + &kid;
+        fs::write(&path, &key_content).expect("Unable to write file");
+
+        let key = get_key(&kid);
+        assert_eq!(key.unwrap(), key_content);
+
+        cleanup_test_files()
+    }
+
+    #[test]
+    fn test_set_key() {
+        let kid = String::from("test_key");
+        let key_content = b"test_key_content".to_vec();
+        cleanup_test_files();
+        fs::create_dir_all(&VERDICTD_KEY_PATH).expect("Unable to create directory");
+        let path = VERDICTD_KEY_PATH.to_string() + &kid;
+
+        let set_res = set_key(&kid, &key_content);
+        assert!(set_res.is_ok());
+
+        let data = fs::read(&path);
+        assert!(data.is_ok());
+        assert_eq!(data.unwrap(), key_content);
+
+        // Cleanup
+        let res = fs::remove_file(&path);
+        assert!(res.is_ok());
+        cleanup_test_files()
+    }
+}

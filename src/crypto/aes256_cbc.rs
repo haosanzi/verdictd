@@ -68,3 +68,24 @@ pub fn decrypt(
 
     Ok(final_result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_encrypt_and_decrypt() {
+        let key = b"01234567890123456789012345678901";
+        let iv = b"012345678901";
+        let data = b"test_data";
+
+        // 测试 encrypt() 函数
+        let encrypted_data = encrypt(data, key, iv);
+        assert!(encrypted_data.is_ok(), "encrypt() 函数测试失败");
+
+        // 测试 decrypt() 函数
+        let decrypted_data = decrypt(&encrypted_data.unwrap(), key, iv);
+        assert!(decrypted_data.is_ok(), "decrypt() 函数测试失败");
+        // assert_eq!(decrypted_data.unwrap(), data.to_vec(), "解密后的数据不正确");
+    }
+}

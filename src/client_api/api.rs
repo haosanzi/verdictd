@@ -30,3 +30,51 @@ pub async fn server(addr: &str) -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use tonic::transport::Channel;
+//     // use crate::client_api::api::clientApi::gpg_service_client::GpgServiceClient;
+
+//     use crate::client_api::api::tests::GpgServiceClient;
+//     use crate::client_api::api::clientApi::gpg_service_client::GpgServiceClient;
+
+//     #[tokio::test]
+//     async fn test_server() -> Result<(), Box<dyn std::error::Error>> {
+//         // Start server in separate task
+//         let addr = "127.0.0.1:0".to_string(); // Random available port on localhost
+//         let server_handle = tokio::spawn(async move {
+//             server(&addr).await.unwrap();
+//         });
+
+//         // Wait for server to start
+//         let server_addr = server_handle
+//             .try_join(tokio::time::timeout(std::time::Duration::from_secs(5), async {
+//                 loop {
+//                     // Try to connect to server address until success or timeout
+//                     if let Ok(mut channel) =
+//                         Channel::from_shared(format!("http://{}", addr)).unwrap().connect().await
+//                     {
+//                         channel.shutdown().await.unwrap();
+//                         return Ok(addr);
+//                     }
+//                 }
+//             }))
+//             .unwrap()
+//             .unwrap();
+
+//         // Test client API communication with server
+//         let mut client =
+//             client_api::gpg_service_client::GpgServiceClient::connect(format!("http://{}", server_addr)).await?;
+//         let request = tonic::Request::new(client_api::gpg::DecryptRequest {
+//             ciphertext: "test".to_string(),
+//         });
+//         let response = client.decrypt(request).await?;
+//         assert_eq!(response.into_inner().plaintext, "test");
+
+//         // Shut down server
+//         server_handle.abort();
+//         Ok(())
+//     }
+// }
